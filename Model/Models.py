@@ -22,6 +22,7 @@ class Encoder(nn.Module):
         # get individual adj
         adj = torch.zeros((event_type.size(0), event_type.size(1), event_type.size(1)), device='cuda:0')
         for i, e in enumerate(event_type):
+            # the slicing operation
             adj[i] = adjacent_matrix[e - 1, :][:, e - 1]
             # performance can be enhanced by adding the element in the diagonal of the normalized adjacency matrix.
             adj[i] += adjacent_matrix[e - 1, e - 1]
