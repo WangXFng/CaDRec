@@ -50,7 +50,8 @@ class Predictor(nn.Module):
         outputs = []
         if C.ABLATION != 'w/oMatcher':
             if not evaluation:
-                # Foursquare 0.5 Yelp2018 0.3 Gowalla 0.1 Brightkite 0.3 ml-1M 0.8 lastfm-2k 0.3 douban-book 0.05
+                # C.BETA_1：
+                #   Foursquare 0.5 Yelp2018 0.3 Gowalla 0.1 Brightkite 0.3 ml-1M 0.8 lastfm-2k 0.3 douban-book 0.05
                 item_encoding = torch.concat([embeddings[1:], pop_encoding[1:] * C.BETA_1], dim=-1)
                 out = user_embeddings.matmul(item_encoding.T)
             else:
@@ -71,8 +72,8 @@ class Model(nn.Module):
             self, num_types, d_model=256, n_layers=4, n_head=4, dropout=0.1, device=0):
         super(Model, self).__init__()
 
-        self.event_emb = nn.Embedding(num_types+1, d_model, padding_idx=C.PAD)  # dding 0
-        self.user_emb = nn.Embedding(C.USER_NUMBER, d_model, padding_idx=C.PAD)  # dding 0
+        self.event_emb = nn.Embedding(num_types+1, d_model, padding_idx=C.PAD)
+        self.user_emb = nn.Embedding(C.USER_NUMBER, d_model, padding_idx=C.PAD)
 
         self.encoder = Encoder(
             num_types=num_types, d_model=d_model,
