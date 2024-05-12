@@ -1,5 +1,5 @@
 ﻿## CaDRec (SIGIR'24) 
-	The paper will be released soon.
+	The paper has been released at [arxiv](https://arxiv.org/pdf/2404.06895).
 
 ### Run
 	python Main.py
@@ -14,7 +14,7 @@ ___
 
 ### Datasets
 	Three files are required: train.txt (for training), tune.txt (for tuning), and test.txt (for testing).
-	Each line denotes an interaction including a user interacted with an times at times.
+	Each line denotes an interaction including a user interacted with at times.
 	The format is [#USER_ID]\t[#ITEM_ID]\t[#TIMES]\n, which is the same for all files.
 	For example,
 	0	0	1
