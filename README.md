@@ -1,5 +1,4 @@
-﻿## CaDRec (SIGIR'24) 
-	The paper has been released at [arxiv](https://arxiv.org/pdf/2404.06895).
+﻿## CaDRec (SIGIR'24) [arxiv](https://arxiv.org/pdf/2404.06895)
 
 ### Run
 	python Main.py
