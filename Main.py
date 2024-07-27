@@ -44,13 +44,7 @@ def train_epoch(model, user_dl, adj_matrix, pop_encoding, optimizer, opt):
         """ backward """
         loss = Utils.type_loss(prediction, event_type, event_time, test_label, opt)
 
-        if C.DATASET in {'Foursquare'}:  eta = 0.04  # best 0.05
-        elif C.DATASET in {'ml-1M'}:  eta = 0.06  # best 0.06
-        elif C.DATASET in {'Gowalla'}:  eta = 0.1
-        elif C.DATASET in {'Yelp2018'}:  eta = 0.6  # best 0.6
-        elif C.DATASET in {'douban-book'}:  eta = 0.65  # best 0.65
-        else: eta = 0.1
-
+        eta = 0.1 if C.DATASET not in C.eta_dict else C.eta_dict[C.DATASET]
         if C.ABLATION != 'w/oNorm':
             loss += Utils.l2_reg_loss(eta, model, event_type)
 
@@ -62,7 +56,7 @@ def train_epoch(model, user_dl, adj_matrix, pop_encoding, optimizer, opt):
     return results_np
 
 
-def eval_epoch(model, user_valid_dl, adj_matrix, in_degree, opt, valid_user_embeddings):
+def eval_epoch(model, user_valid_dl, adj_matrix, in_degree, opt):
     """ Epoch operation in evaluation phase. """
 
     model.eval()
@@ -93,18 +87,16 @@ def train(model, data, optimizer, scheduler, opt):
     for epoch_i in range(opt.epoch):
         print('[ Epoch', epoch_i + 1, ']')
 
-        valid_user_embeddings = torch.zeros((C.USER_NUMBER, opt.d_model), device='cuda:0')
-
         np.set_printoptions(formatter={'float': '{: 0.5f}'.format})
-        start = time.time()
+        # start = time.time()
         [pre, rec, map_, ndcg] = train_epoch(model, user_dl, adj_matrix, pop_encoding, optimizer, opt)
-        print('\r(Training)  P@k:{pre},    R@k:{rec}, \n'
-              '(Training)map@k:{map_}, ndcg@k:{ndcg}, '
-              'elapse:{elapse:3.3f} min'
-              .format(elapse=(time.time() - start) / 60, pre=pre, rec=rec, map_=map_, ndcg=ndcg))
+        # print('\r(Training)  P@k:{pre},    R@k:{rec}, \n'
+        #       '(Training)map@k:{map_}, ndcg@k:{ndcg}, '
+        #       'elapse:{elapse:3.3f} min'
+        #       .format(elapse=(time.time() - start) / 60, pre=pre, rec=rec, map_=map_, ndcg=ndcg))
 
         start = time.time()
-        [pre, rec, map_, ndcg] = eval_epoch(model, user_valid_dl, adj_matrix, pop_encoding, opt, valid_user_embeddings)
+        [pre, rec, map_, ndcg] = eval_epoch(model, user_valid_dl, adj_matrix, pop_encoding, opt)
         print('\r(Test)  P@k:{pre},    R@k:{rec}, \n'
               '(Test)map@k:{map_}, ndcg@k:{ndcg}, '
               'elapse:{elapse:3.3f} min'
@@ -113,27 +105,12 @@ def train(model, data, optimizer, scheduler, opt):
         scheduler.step()
         if best_[-1][1] < ndcg[1]: best_ = [pre, rec, map_, ndcg]
 
-    # with open('beta_lambda_{}.log'.format(C.DATASET), 'a') as f:
-    #     f.write("%s Beta:%.4f Lambda:%.4f NDCG@20:%.4f\n" % (C.DATASET, opt.beta, opt.lambda_, best_[-1][-1]))
-    #     f.close()
-
-        # path = './result/{}/emb/'.format(C.DATASET)
-        # folder = "{accuracy:8.5f}/".format(accuracy=best_[-1][1])
-        # if not os.path.exists(path) or len(os.listdir(path)) == 0:
-        #     if not os.path.exists(path): os.mkdir(path)
-        #     if not os.path.exists(path+folder): os.mkdir(path+folder)
-        #     # np.save(path+folder+"wo_item.npy", model.event_emb.weight.detach().cpu().numpy())
-        #     # np.save(path+folder+"before_user.npy", before_user_embeddings.cpu().numpy())
-        #     # np.save(path+folder+"disentangled_user.npy", valid_user_embeddings.cpu().numpy())
-        #     np.save(path+folder+"item.npy", model.event_emb.weight.detach().cpu().numpy())
-        # for file_name in os.listdir(path):
-        #     if float(file_name) < best_[-1][1]:
-        #         shutil.rmtree(path+file_name)
-        #         os.mkdir(path + folder)
-        #         # np.save(path+folder+"wo_item.npy", model.event_emb.weight.detach().cpu().numpy())
-        #         # np.save(path+folder+"before_user.npy", before_user_embeddings.cpu().numpy())
-        #         # np.save(path+folder+"disentangled_user.npy", valid_user_embeddings.cpu().numpy())
-        #         np.save(path+folder+"item.npy", model.event_emb.weight.detach().cpu().numpy())
+    print('\n', '-' * 40, 'BEST', '-' * 40)
+    print('k', C.Ks)
+    print('\rP@k:{pre},    R@k:{rec}, \n'
+          '(Best)map@k:{map_}, ndcg@k:{ndcg}'
+          .format(pre=best_[0], rec=best_[1], map_=best_[2], ndcg=best_[3]))
+    print('-' * 40, 'BEST', '-' * 40, '\n')
     return best_[-1][1]
 
 
@@ -209,9 +186,9 @@ def main(trial):
     opt.smooth = 0.03
 
     if DATASET == 'Foursquare': opt.d_model, opt.n_head = 768, 1
-    elif DATASET == 'Gowalla': opt.d_model, opt.n_head, opt.epoch = 512, 1, 30
-    elif DATASET == 'douban-book': opt.d_model, opt.n_head, opt.epoch = 512, 1, 30
-    elif DATASET == 'Yelp2018': opt.d_model, opt.n_head, opt.epoch = 512, 1, 35
+    elif DATASET == 'Gowalla': opt.d_model, opt.n_head = 512, 1
+    elif DATASET == 'douban-book': opt.d_model, opt.n_head = 512, 1
+    elif DATASET == 'Yelp2018': opt.d_model, opt.n_head = 512, 1
     elif DATASET == 'ml-1M': opt.d_model, opt.n_head = 512, 2
     else: opt.d_model, opt.n_head = 512, 1
 
@@ -256,6 +233,12 @@ def main(trial):
 
 
 if __name__ == '__main__':
-    study = optuna.create_study(direction="maximize")
-    study.optimize(main, n_trials=100)
+    main(None)
+
+    # if you want to tune hyperparameters, please comment out main(None) and use the following code
+    # study = optuna.create_study(direction="maximize")
+    # n_trials = 100
+    # study.optimize(main, n_trials=n_trials)
+
+
 

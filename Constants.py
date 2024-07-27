@@ -1,4 +1,6 @@
 PAD = 0
+Ks = [1, 5, 10, 20]
+print('k:', Ks)
 
 DATASET = "douban-book"  # Yelp2018  Gowalla  Foursquare ml-1M douban-book
 ABLATIONs = {'w/oWeSch', 'w/oPopDe', 'w/oSA', 'w/oNorm', 'w/oUSpec', 'w/oHgcn', 'w/oDisen'}
@@ -34,6 +36,15 @@ beta_dict = {
     'Yelp2018': 0.25,  # best 0.25,
     'Foursquare': 0.5,  # best 0.5
 }
+
+eta_dict = {
+    'ml-1M': 0.06,  # best 0.42,  # 0.5,  # 0.8  # 3629
+    'douban-book': 0.65,  # best 0.07, 0.05,
+    'Gowalla': 0.1,
+    'Yelp2018': 0.6,  # best 0.25,
+    'Foursquare': 0.04,  # best 0.5
+}
+
 BETA_1 = beta_dict[DATASET]
 if ABLATION == 'w/oPopDe' or ABLATION == 'w/oDisen': BETA_1 = 0
 
