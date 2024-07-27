@@ -1,5 +1,8 @@
-﻿## CaDRec (SIGIR'24) 
-	The paper will be released soon.
+﻿## CaDRec (SIGIR'24) [arxiv](https://arxiv.org/pdf/2404.06895)
+ 
+## Paper
+- CaDRec: Contextualized and Debiased Recommender Model., **SIGIR 2024 Oral**.
+- [**Xinfeng Wang**](https://wangxfng.github.io/), Fumiyo Fukumoto, Jin Cui, Yoshimi Suzuki, Jiyi Li, Dongjin Yu.
 
 ### Run
 	python Main.py
@@ -14,7 +17,7 @@ ___
 
 ### Datasets
 	Three files are required: train.txt (for training), tune.txt (for tuning), and test.txt (for testing).
-	Each line denotes an interaction including a user interacted with an times at times.
+	Each line denotes an interaction including a user interacted with at times.
 	The format is [#USER_ID]\t[#ITEM_ID]\t[#TIMES]\n, which is the same for all files.
 	For example,
 	0	0	1
@@ -34,5 +37,6 @@ If this repository helps you, please cite:
 	  title={CaDRec: Contextualized and Debiased Recommender Model},
 	  author={Wang, Xinfeng and Fukumoto, Fumiyo and Cui, Jin and Suzuki, Yoshimi and Li, Jiyi and Yu, Dongjin},
 	  booktitle={Proceedings of the 47th International ACM SIGIR Conference on Research and Development in Information Retrieval},
+   	  pages={405–-415},
 	  year={2024}
 	}
