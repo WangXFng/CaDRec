@@ -1,6 +1,6 @@
-﻿## CaDRec (SIGIR'24) [arxiv](https://arxiv.org/pdf/2404.06895)
+﻿## CaDRec (SIGIR'24) 
  
-## Paper
+## Paper - [[ArXiv]](https://arxiv.org/pdf/2404.06895)
 - CaDRec: Contextualized and Debiased Recommender Model., **SIGIR 2024 Oral**.
 - [**Xinfeng Wang**](https://wangxfng.github.io/), Fumiyo Fukumoto, Jin Cui, Yoshimi Suzuki, Jiyi Li, Dongjin Yu.
 
